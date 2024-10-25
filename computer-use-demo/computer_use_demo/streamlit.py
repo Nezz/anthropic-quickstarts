@@ -13,6 +13,7 @@ from functools import partial
 from pathlib import PosixPath
 from typing import cast
 
+import dotenv
 import httpx
 import streamlit as st
 from anthropic import RateLimitError
@@ -28,6 +29,8 @@ from computer_use_demo.loop import (
     sampling_loop,
 )
 from computer_use_demo.tools import ToolResult
+
+dotenv.load_dotenv()
 
 CONFIG_DIR = PosixPath("~/.anthropic").expanduser()
 API_KEY_FILE = CONFIG_DIR / "api_key"
@@ -148,10 +151,6 @@ async def main():
             with st.spinner("Resetting..."):
                 st.session_state.clear()
                 setup_state()
-
-                subprocess.run("pkill Xvfb; pkill tint2", shell=True)  # noqa: ASYNC221
-                await asyncio.sleep(1)
-                subprocess.run("./start_all.sh", shell=True)  # noqa: ASYNC221
 
     if not st.session_state.auth_validated:
         if auth_error := validate_auth(
@@ -371,6 +370,7 @@ def _render_message(
         elif isinstance(message, dict):
             if message["type"] == "text":
                 st.write(message["text"])
+                subprocess.Popen(["say", message["text"].splitlines()[0]])
             elif message["type"] == "tool_use":
                 st.code(f'Tool Use: {message["name"]}\nInput: {message["input"]}')
             else:
