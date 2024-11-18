@@ -96,7 +96,7 @@ source .venv/bin/activate
 Run the Streamlit application:
 
 ```bash
-streamlit run app.py
+streamlit run computer_use_demo/streamlit.py
 ```
 
 This will start the application and provide you with a local URL (e.g., http://localhost:8501) to access the interface in your browser.
